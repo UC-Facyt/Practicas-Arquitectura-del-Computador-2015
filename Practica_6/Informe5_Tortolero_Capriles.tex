@@ -1,0 +1,250 @@
+\documentclass{article}
+
+\usepackage[spanish]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{graphicx}
+\usepackage{wrapfig}
+\usepackage{courier}
+\usepackage{listings}
+\usepackage{xcolor}
+ % % % % % % % %
+ 
+\definecolor{mygreen}{rgb}{0,0.6,0}
+\definecolor{mygray}{rgb}{0.5,0.5,0.5} 
+\definecolor{mymauve}{rgb}{0.58,0,0.82}
+
+% %DEFINIENDO ESTILO PARA SOURCE CODE LISTING PARA ASM 8051 % %
+\lstdefinelanguage{ASM8051}{
+  keywords={MOV, JMP, DEFSEG, CPL, RETI, SETB, SUBB, ORG, DB, MOVC, CLR, RET, JNB, CALL, CJNE, INC, DEC, END, PUSH, POP, JZ, JB},
+  keywordstyle=\color{blue}\bfseries,
+  ndkeywords={DELSE, VECTOR, RST, FINC, INEXT, IELSE1, IELSE2, FDCN, DNEXT, DELSE1, DELSE2, FWAIT, WELSE, SIT1, WAIT, AUX, INICIO, EXIT},
+  ndkeywordstyle=\color{darkgray}\bfseries,
+  identifierstyle=\color{black},
+  sensitive=false,
+  comment=[l]{;},
+  morecomment=[s]{/*}{*/},
+  commentstyle=\color{purple}\ttfamily,
+  stringstyle=\color{red}\ttfamily,
+  morestring=[b]',
+  morestring=[b]"
+}
+
+\lstset{
+   language=ASM8051,
+   backgroundcolor=\color{lightgray},
+   extendedchars=true,
+   basicstyle=\footnotesize\ttfamily,
+   showstringspaces=false,
+   showspaces=false,
+   numbers=left,
+   numberstyle=\footnotesize,
+   numbersep=9pt,
+   tabsize=2,
+   breaklines=true,
+   showtabs=false,
+   captionpos=b
+}
+
+
+\usepackage{anysize}
+\marginsize{2.54cm}{2.54cm}{2.54cm}{2.54cm}
+
+\usepackage{setspace}
+\onehalfspacing
+%En caso de que LaTeX separe las palabras con - de manera incorrecta, usar
+%\hyphenation{deci-sión,e-xa-men, otras palabras....}
+
+% %PORTADA
+\begin{document}
+
+\begin{centering}
+\hrule 	\vspace{0.4cm}
+	{ \Huge \bfseries Informe Practica VI \\[0.4cm] }
+\hrule \vfill
+\end{centering}
+
+\noindent
+\centerline{Victor Tortolero \& Oswaldo Capriles} \newline
+
+\vspace{8cm}
+\centerline{Universidad de Carabobo}
+\centerline{Facultad de Ciencia y Tecnologia}
+\centerline{Arquitectura del Computador}
+\centerline{\today}
+
+\newpage
+% %Fin Portada
+
+
+%%CUERPO PRINCIPAl%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{centering} \section{Las Interrupciones} \end{centering}
+	Una interrupción es una señal que recibe el procesador, ante la cual debe detener cualquier proceso que este realizando y darle prioridad al proceso o tarea que debe realizar según la interrupción que haya ocurrido. Las interrupciones también puede decirse que son un evento, que es accionado por una señal de hardware o software. 
+	
+	Las interrupciones de hardware son usadas para indicar al sistema operativo que cierto dispositivo requiere atención. Y fueron hechas con la finalidad de evitar código innecesario que solo esperaba por una entrada o señal de algún hardware.
+	
+	Cuando hablamos de las interrupciones por software, podemos hablar de las excepciones, que se usan para que el programa no reaccione de manera inesperada y sepa manejar los distintos errores que podrían causarse en tiempo de ejecución. Por ejemplo, en el caso de que el usuario ingrese una cadena y el programa espere un entero, en ese caso el programa no terminaría con un error, sino que haría algo al respecto, como notificarle al usuario y seguiría con la ejecución normal.Las interrupciones son comúnmente usadas para programas multitarea.
+\newpage
+	
+%%FIN CUERPO PRINCIPAl%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\newpage
+\begin{centering} \section{Código Fuente} \end{centering}
+
+\begin{lstlisting}[caption = Codigo Practica 5]
+;Practica 6, Victor Tortolero, Oswaldo Capriles
+DEFSEG	INICIO1,ABSOLUTE
+SEG	INICIO1
+JMP	INICIO
+
+			ORG 	1BH
+SIT1:	PUSH 	ACC
+			CALL 	boing
+			MOV 	R7, #01H
+			POP 	ACC
+			RETI
+
+ORG 	100H
+;Etiquetas de reloj
+CERO	EQU 	30H
+NUEVE	EQU 	39H
+HOR1	EQU		20H
+HOR2	EQU		21H
+MIN		EQU		24H
+SEG		EQU		27H
+VAR 	EQU 	50H
+;Etiquetas de carita
+FACE 	EQU 	02H
+BLAN 	EQU 	20H
+FLAG	EQU 	F0
+
+;Subprograma de la Carita
+boing:	CJNE 	R1, #3FH, swag
+			CPL		FLAG
+swag:	CJNE 	R1, #38H, trans
+			CPL		FLAG
+trans:	JB 		FLAG, izq
+der:	INC 	R3
+			JMP 	step
+izq:	DEC 	R3
+step:	MOV		@R1, #BLAN
+			MOV 	R1, 03H
+			MOV 	@R1, #FACE
+			RET
+;Fin de Subprograma de la Carita
+
+;Proceso del reloj %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+RELOJ:	MOV		R7, #00H
+				MOV 	A, P0
+				MOV 	R0, #SEG
+				CJNE 	A, #'a', ELSE1
+				CALL 	IRELOJ
+				RET
+ELSE1:	CJNE 	A, #'A', ELSE2
+				CALL 	IRELOJ
+				RET
+ELSE2:	CJNE 	A, #'d', ELSE3
+				CALL 	DRELOJ
+				RET
+ELSE3:	CJNE 	A, #'D', ELSE4
+				CALL 	DRELOJ
+ELSE4: 	RET
+
+IRELOJ:	CJNE 	@R0, #'9', ELSE5	;Revisando segundos
+				MOV 	@R0, #'0'
+				DEC 	R0
+				CJNE 	@R0, #'5', ELSE5
+				MOV 	@R0, #'0'
+				MOV 	R0, #MIN			;Revisando minutos
+				CJNE 	@R0, #'9', ELSE5
+				MOV 	@R0, #'0'
+				DEC 	R0
+				CJNE 	@R0, #'5', ELSE5
+				MOV 	@R0, #'0'
+				MOV 	R0, #HOR1			;Revisando horas
+				CJNE 	@R0, #'2', ELSE6
+				INC 	R0
+				CJNE 	@R0, #'3', ELSE5
+				MOV 	@R0, #'0'
+				DEC 	R0
+				MOV 	@R0, #'0'
+				RET
+ELSE5:	INC 	@R0
+				RET
+ELSE6:	INC 	R0					;Continuacion de la revision de horas
+				CJNE 	@R0, #'9', ELSE5
+				MOV 	@R0, #'0'
+				DEC 	R0
+				INC 	@R0
+				RET
+
+DRELOJ:	CJNE 	@R0, #'0', ELSE7	;Revisando segundos
+				MOV 	@R0, #'9'
+				DEC 	R0
+				CJNE 	@R0, #'0', ELSE7
+				MOV 	@R0, #'5'
+				MOV 	R0, #MIN			;Revisando minutos
+				CJNE 	@R0, #'0', ELSE7
+				MOV 	@R0, #'9'
+				DEC 	R0
+				CJNE 	@R0, #'0', ELSE7
+				MOV 	@R0, #'5'
+				MOV 	R0, #HOR1			;Revisando horas
+				CJNE 	@R0, #'0', ELSE8
+				INC 	R0
+				CJNE 	@R0, #'0', ELSE7
+				MOV 	@R0, #'3'
+				DEC 	R0
+				MOV 	@R0, #'2'
+				RET
+ELSE7:	DEC  	@R0
+				RET
+ELSE8:	INC 	R0					;Continuacion de la revision de horas
+				CJNE 	@R0, #'0', ELSE7
+				MOV 	@R0, #'9'
+				DEC 	R0
+				DEC 	@R0
+				RET
+;Fin del Proceso del reloj %%%%%%%%%%%%%%%%%%%
+
+;Inicializando el Reloj en 00:00:00
+INIT:	MOV 	20H, #'0'
+			MOV 	21H, #'0'
+			MOV 	22H, #':'
+			MOV 	23H, #'0'
+			MOV 	24H, #'0'
+			MOV 	25H, #':'
+			MOV 	26H, #'0'
+			MOV 	27H, #'0'
+			MOV 	R1, #38H
+			MOV		@R1, #BLAN
+			INC 	R1
+			CJNE 	R1, #3FH, init2
+			MOV 	@R1, #FACE
+			MOV 	R3, 01H
+			RET
+
+INICIO:	MOV		PSW, #00H		
+				CALL 	INIT
+				MOV 	TMOD, #00100000B 	;Poniendo Timer 0 y Timer 1 en modo 2
+				MOV 	R7, #00H
+				SETB 	EA					;Activando Interrupciones
+				SETB 	ET1					;Activando interrupcion del Timer 1
+				SETB 	TR1					;Activando el Timer 1
+				SETB 	PT1					;Dandole prioridad al Timer 1
+
+LOOP: 	CJNE 	R7, #01H, LOOP
+				CALL 	RELOJ
+				JMP 	LOOP
+
+EXIT:  	END
+\end{lstlisting}
+\newpage
+\begin{thebibliography}{3}
+	\bibitem{Tutorial 8051} \textsc{Donal Heffernan} (2002). \underline{\textit{8051 Tutorial}}, University of Limerick.
+	\bibitem{8051 overview} \textsc{Curtis A. Nelson}. \underline{\textit{8051 Overview and Instruction Set}}.
+	\bibitem{pag} \textsc{Autor Desconocido}. \underline{\textit{http://www.8052.com/tut8051}}.
+\end{thebibliography}
+	
+\end{document}
