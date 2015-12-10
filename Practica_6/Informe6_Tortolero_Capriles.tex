@@ -5,6 +5,7 @@
 \usepackage[T1]{fontenc}
 \usepackage{graphicx}
 \usepackage{wrapfig}
+\usepackage{hyperref}
 \usepackage{courier}
 \usepackage{listings}
 \usepackage{xcolor}
@@ -77,6 +78,9 @@
 % %Fin Portada
 
 
+\flushleft
+\setlength{\parindent}{20pt}
+
 %%CUERPO PRINCIPAl%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{centering} \section{Las Interrupciones} \end{centering}
 	Una interrupción es una señal que recibe el procesador, ante la cual debe detener cualquier proceso que este realizando y darle prioridad al proceso o tarea que debe realizar según la interrupción que haya ocurrido. Las interrupciones también puede decirse que son un evento, que es accionado por una señal de hardware o software. 
@@ -86,6 +90,21 @@
 	Cuando hablamos de las interrupciones por software, podemos hablar de las excepciones, que se usan para que el programa no reaccione de manera inesperada y sepa manejar los distintos errores que podrían causarse en tiempo de ejecución. Por ejemplo, en el caso de que el usuario ingrese una cadena y el programa espere un entero, en ese caso el programa no terminaría con un error, sino que haría algo al respecto, como notificarle al usuario y seguiría con la ejecución normal.Las interrupciones son comúnmente usadas para programas multitarea.
 \newpage
 	
+	
+\begin{centering} \section{Programacion Concurrente} \end{centering}
+	Se habla de concurrencia cuando ocurren varios sucesos de manera contemporánea.
+	En base a esto, la concurrencia en computación esta asociada a la ejecución de varios procesos que coexisten temporalmente.
+	
+	Para definir correctamente la programación concurrente, es necesario diferenciar programa de proceso.
+	Un programa es un conjunto de sentencias o instrucciones que se ejecutan secuencialmente, y un proceso es básicamente un programa en ejecución.
+	
+	La concurrencia aparece cuando dos o mas procesos son contemporáneos. Un caso particular es el paralelismo o programación paralela. Los procesos pueden competir o colaborar entre si por los recursos del sistema. Por tanto, existen tareas de colaboración y sincronización
+	
+	La programación concurrente se encarga del estudio de las nociones de ejecución concurrente, asi como sus problemas de comunicación y sincronización.
+
+\vspace{1cm}
+\begin{centering} \section{Ejecución concurrente de programas y el temporizador} \end{centering}
+	En programación concurrente un temporizador es un objeto que puede notificar a un proceso si ha transcurrido un cierto intervalo de tiempo o se ha alcanzado una hora determinada, los temporizadores permiten crear periodos temporales que una vez finalizados pueden generar señales que se envíen a otros procesos o al sistema operativo, informando sobre la finalización del temporizador. De igual forma también se pueden utilizar como contadores de cuenta atrás. cada temporizador esta asociado a un reloj.
 %%FIN CUERPO PRINCIPAl%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
@@ -224,7 +243,6 @@ INIT:	MOV 	20H, #'0'
 			MOV 	@R1, #FACE
 			MOV 	R3, 01H
 			RET
-
 INICIO:	MOV		PSW, #00H		
 				CALL 	INIT
 				MOV 	TMOD, #00100000B 	;Poniendo Timer 0 y Timer 1 en modo 2
@@ -241,10 +259,11 @@ LOOP: 	CJNE 	R7, #01H, LOOP
 EXIT:  	END
 \end{lstlisting}
 \newpage
-\begin{thebibliography}{3}
-	\bibitem{Tutorial 8051} \textsc{Donal Heffernan} (2002). \underline{\textit{8051 Tutorial}}, University of Limerick.
-	\bibitem{8051 overview} \textsc{Curtis A. Nelson}. \underline{\textit{8051 Overview and Instruction Set}}.
-	\bibitem{pag} \textsc{Autor Desconocido}. \underline{\textit{http://www.8052.com/tut8051}}.
+\begin{thebibliography}{4}
+	\bibitem{} \url{https://es.wikipedia.org/wiki/Computaci\%C3\%B3n\_concurrente}
+	\bibitem{} \url{http://www2.ulpgc.es/hege/almacen/download/20/20233/tema1.pdf}
+	\bibitem{} \url{https://books.google.co.ve/books?id=8nTnCgAAQBAJ\&pg=PT24\&lpg=PT24\&dq=Ejecuci\%C3\%B3n+concurrente+de+programas+y+el+temporizador\&source=bl\&ots=D27DHnY\_fK\&sig=t4YS5WZh7EwYU1s0eiRsCzVG3DE\&hl=en\&sa=X\&redir\_esc=y\#v=onepage\&q=Ejecuci\%C3\%B3n\%20concurrente\%20de\%20programas\%20y\%20el\%20temporizador\&f=false}
+	\bibitem{} \url{https://en.wikipedia.org/wiki/Interrupt}
 \end{thebibliography}
 	
 \end{document}
