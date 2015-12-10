@@ -123,14 +123,14 @@ INIT:	MOV 	20H, #'0'
 		MOV 	26H, #'0'
 		MOV 	27H, #'0'
 		MOV 	R1, #38H
-init2	MOV		@R1, #BLAN
+init2:	MOV		@R1, #BLAN
 		INC 	R1
 		CJNE 	R1, #3FH, init2
 		MOV 	@R1, #FACE
 		MOV 	R3, 01H
 		RET
 
-INICIO:	MOV		PSW, #00H		
+INICIO:	MOV		PSW, #00H			;Esto es opcional 
 		CALL 	INIT
 		MOV 	TMOD, #00100000B 	;Poniendo Timer 0 y Timer 1 en modo 2
 		MOV 	R7, #00H
